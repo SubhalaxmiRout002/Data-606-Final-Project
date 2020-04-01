@@ -1,0 +1,126 @@
+---
+title: "Rout - DATA 606 Data Project Proposal"
+author: "Subhalaxmi Rout"
+output:
+  pdf_document: default
+  html_document:
+    df_print: paged
+---
+
+### Data Preparation
+
+The Company ABC  has very poor employee satisfaction and retention. Company has decided to look into the request of paying their employees for overtime hours. The information available for the sample employees includes currently available information such as satisfaction, number of projects and salary level as well as hours worked.
+
+```{r message=FALSE, warning=FALSE}
+# load libraries
+library(ggplot2)
+library(DT)
+library(dplyr)
+library(data.table)
+
+# load data
+hr_data <- read.csv("https://raw.githubusercontent.com/SubhalaxmiRout002/Data-606-Final-Project/master/HR_comma_sep.csv", stringsAsFactors = FALSE)
+
+# about data
+str(hr_data)
+
+# data info
+dim(hr_data)
+
+# view data
+DT::datatable(hr_data)
+
+#rename columns
+colNames <- c("satLevel", "lastEval", "numProj", "avgHrs", "timeCpny"
+              , "wrkAcdnt", "left", "fiveYrPrmo", "department", "salary")
+data.table::setnames(hr_data, colNames)
+names(hr_data)
+```
+
+
+### Research question 
+
+**You should phrase your research question in a way that matches up with the scope of inference your dataset allows for.**
+
+Predict, how much salary the company would need to pay out for the overtime employe. 
+
+### Cases 
+
+**What are the cases, and how many are there?**
+
+Each case represents an employee working hours details along with salary. There `r nrow(hr_data)` observations in the given data set.
+
+### Data collection 
+
+**Describe the method of data collection.**
+
+Data collected from Kaggle. 
+[Here is the source:](https://www.kaggle.com/giripujar/hr-analytics)
+
+### Type of study 
+
+**What type of study is this (observational/experiment)?**
+
+This is an observational study.
+
+
+
+### Data Source 
+
+**If you collected the data, state self-collected. If not, provide a citation/link.**
+
+Data is collected by `Kaggle` and is available online here: https://www.kaggle.com/giripujar/hr-analytics . 
+For this project, downloaded data from `Kaggle` and stored the data in Github repository. Using `read.csv()` read the data from Git repo.
+
+
+### Dependent Variable
+
+**What is the response variable? Is it quantitative or qualitative?**
+
+Salary, job left are response variable. Both are qualitative.
+
+### Independent Variable
+
+**You should have two independent variables, one quantitative and one qualitative.**
+
+Number of project(number_project), Average Monthly hours spend (average_montly_hours) and level of satisfaction (satisfaction_level) are independent variable.
+All are quantitative.
+
+Department is qualitative.
+
+
+### Relevant summary statistics 
+
+**Provide summary statistics for each the variables. Also include appropriate visualizations related to your research question (e.g. scatter plot, boxplots, etc). This step requires the use of R, hence a code chunk is provided below. Insert more code chunks as needed.**
+
+```{r}
+# show summary statistics of each column
+summary(hr_data)
+
+# histogram for all numeric variables to understand distribution
+ggplot(data = hr_data, aes(x = avgHrs/4)) + 
+  geom_histogram(breaks=seq(10, 100, by=7), color = "black", fill = "steelblue") + 
+  labs(title="Distribution of Average Hours per Week",x="Avg Hours", y = "Frequency")
+
+ggplot(data = hr_data, aes(x = satLevel)) + 
+  geom_histogram(breaks=seq(0, 1, by=0.1), color = "black", fill = "steelblue") + 
+  labs(title="Distribution of Satisfaction Level",x="Satisfaction Level", y = "Frequency")
+
+ggplot(data = hr_data, aes(x = lastEval)) + 
+  geom_histogram(breaks=seq(0, 1, by=.1), color = "black", fill = "steelblue") + 
+  labs(title="Distribution of Last Evaluations",x="Last Eval", y = "Frequency")
+
+ggplot(data = hr_data, aes(x = numProj)) + 
+  geom_histogram(breaks=seq(1, 10, by=1), color = "black", fill = "steelblue") + 
+  labs(title="Distribution of Number of Projects",x="Number of Projects", y = "Frequency")
+
+# box plot to show the percentile distribution of average hours per week by jdepartment.
+ggplot(data = hr_data) + geom_boxplot(aes(x = department, y = avgHrs), fill = "steelblue") + 
+  labs(title="Department Analysis Data", x="Department", y = "Avg Hours") + 
+  theme(axis.text.x=element_text(angle=30,hjust=1),plot.title = element_text(hjust = 0.5))
+
+```
+
+### Conclusions
+
+We can do a lot of comparions between various variables i.e highest retention by department, employee that decided to left vs the employee that still working based on salary, ratio of satisfied employee vs unsatisfied employee. We can predict the salary (per month/year) for the employee who worked over time using linear regression model.   
